@@ -7,11 +7,12 @@ namespace Mensa;
 
 public partial class MainPage : ContentPage
 {
-    private IService<IMealQuery, List<IMealCollection>> _service = new MockGetMealsService();
+    private readonly IGetMealsService _service;
 
-    public MainPage()
+    public MainPage(IGetMealsService service)
     {
         InitializeComponent();
+        _service = service;
     }
 
     protected async override void OnAppearing()
@@ -19,8 +20,15 @@ public partial class MainPage : ContentPage
         base.OnAppearing();
         try
         {
-            SuccessHandler(await _service.Execute(
-                new MealQuery() { Mensa = 42, Date = DateTime.Now }));
+            SuccessHandler(
+                await _service.Execute(
+                    new MealQuery()
+                    {
+                        Mensa = 42,
+                        Date = DateTime.Now
+                    }
+                )
+            );
         }
         catch (Exception ex)
         {
@@ -37,6 +45,4 @@ public partial class MainPage : ContentPage
     {
         Debug.WriteLine(meals.ToString());
     }
-
 }
-
